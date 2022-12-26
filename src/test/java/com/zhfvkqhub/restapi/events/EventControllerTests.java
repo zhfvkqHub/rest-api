@@ -33,7 +33,7 @@ public class EventControllerTests {
     @Test
     @TestDescription("정상적으로 이벤트를 생성하는 테스트")
     public void createEvent() throws Exception{
-        EventDTO event = EventDTO.builder()
+        EventDto event = EventDto.builder()
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2022, 12, 25,0,0,0,0))
@@ -93,7 +93,7 @@ public class EventControllerTests {
     @Test
     @TestDescription("입력 값이 비어있는 경우에 에러가 발생하는 테스트")
     public void createEvent_Bad_Request_Empty_Input() throws Exception {
-        EventDTO eventDTO = EventDTO.builder().build();
+        EventDto eventDTO = EventDto.builder().build();
 
         this.mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -105,7 +105,7 @@ public class EventControllerTests {
     @Test
     @TestDescription("입력 값이 잘못된 경우에 에러가 발생하는 테스트")
     public void createEvent_Bad_Request_Wrong_Input() throws Exception {
-        EventDTO eventDTO = EventDTO.builder()
+        EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2022, 12, 25,0,0,0,0))
@@ -120,8 +120,12 @@ public class EventControllerTests {
 
         this.mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(this.objectMapper.writeValueAsString(eventDTO)))
+                        .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
         ;
     }
 }

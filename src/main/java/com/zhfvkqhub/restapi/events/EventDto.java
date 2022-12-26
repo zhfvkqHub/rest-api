@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class EventDTO {
+public class EventDto {
 
     @NotEmpty
     private String name;
