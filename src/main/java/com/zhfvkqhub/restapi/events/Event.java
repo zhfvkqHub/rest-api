@@ -30,4 +30,14 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
 
+    public void update() {
+        // update free
+        this.free = (this.basePrice == 0 && this.maxPrice == 0) ? true : false;
+
+        if(this.location == null || this.location.isBlank()){ // java11 비어있는지 체크(자바8 trim -> isEmpty)
+            this.offline = false;
+        }else{
+            this.offline = true;
+        }
+    }
 }
