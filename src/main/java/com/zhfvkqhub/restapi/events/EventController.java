@@ -1,6 +1,7 @@
 package com.zhfvkqhub.restapi.events;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
@@ -16,6 +17,7 @@ import java.net.URI;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/events", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
@@ -25,11 +27,18 @@ public class EventController {
     private final EventRepository eventRepository;
     @Autowired
     private final ModelMapper modelMapper;
+    @Autowired
+    private final EventValidator eventValidator;
 
     @PostMapping
     public ResponseEntity createEcent(@RequestBody @Valid EventDTO eventDTO, Errors errors){
         if(errors.hasErrors())
             return ResponseEntity.badRequest().build();
+
+        eventValidator.validate(eventDTO, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.badRequest().build();
+        }
 
         Event event = modelMapper.map(eventDTO, Event.class);
         Event newEvent = this.eventRepository.save(event);
